@@ -3,7 +3,7 @@ package pack;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,30 +13,34 @@ import java.util.Scanner;
 
 public class Main {
 
+    public static int DECIMALS = 64;
+
     public static void main(String[] args) throws FileNotFoundException {
 
-        File file = new File("D:\\ULE\\3º\\SI\\datos_3.txt");
+        File file = new File("D:\\Alberto GM\\ULE\\3º\\SI\\datos_3.txt");
 
         /** FUENTE DE INFORMACIÓN */
         ArrayList<Alfabeto> lista = generarLista(file);
         System.out.println("Entropía en bits: "+calcularEntropia(lista));
 
         /** NUMERO A MENSAJE */
-        BigDecimal num = BigDecimal.valueOf(0.247276109705412160222);
-        int longuitud=19;
-        System.out.println(num);
+        BigDecimal num = new BigDecimal("0.96402816270036736770957975564255630564009");
+        int longuitud=27;
         dividirFuente(lista);
+
+        String msg = calcularMensaje(longuitud, num, lista);
+        System.out.println("El mensaje codificado es: "+msg);
+
+        /** INFO DE LA FUENTE EXTRA */
         /*for(int i=0; i<lista.size(); i++){
             System.out.print(lista.get(i).getChar() + " - ");
             System.out.println(lista.get(i).getL() + " , " + lista.get(i).getH());
         }*/
-        String msg = calcularMensaje(longuitud, num, lista);
-        System.out.println(msg);
 
-        for(int i=0; i<lista.size(); i++){
+        /*for(int i=0; i<lista.size(); i++){
             System.out.print(i+1 + " - ");
             System.out.println(lista.get(i).imprimir());
-        }
+        }*/
     }
 
     private static ArrayList<Alfabeto> generarLista(File file) throws FileNotFoundException {
@@ -95,25 +99,30 @@ public class Main {
     private static String calcularMensaje(int lon, BigDecimal num, ArrayList<Alfabeto> list){
         String[] msg = new String[lon];
         BigDecimal numActual = num;
-
         for(int i=0; i<lon; i++){
             BigDecimal Lj = new BigDecimal(0);
             BigDecimal Hj = new BigDecimal(0);
             for(int x=0; x<list.size(); x++){
                 int bool = numActual.compareTo(list.get(x).getL());
-                int bool2 = numActual.compareTo(list.get(x).getL());
-                if(bool==1 && bool2==-1){
+                int bool2 = numActual.compareTo(list.get(x).getH());
+                if(bool>=0 && bool2==-1){
                     Lj = list.get(x).getL();
                     Hj = list.get(x).getH();
                     msg[i] = String.valueOf(list.get(x).getChar());
-                    System.out.println(msg[i]);
                     break;
                 }
             }
-            numActual = (numActual.subtract(Lj)).divide(Hj.subtract(Lj), MathContext.DECIMAL128);
+            numActual = (numActual.subtract(Lj)).divide(Hj.subtract(Lj), DECIMALS, RoundingMode.HALF_UP);
         }
 
-        return msg.toString();
+        /** STRING[] A STRING */
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < msg.length; i++) {
+            if(msg[i].equals("⎵")) msg[i]=" ";
+            sb.append(msg[i]);
+        }
+
+        return sb.toString();
     }
 
     private static void dividirFuente(ArrayList<Alfabeto> lista){
@@ -121,8 +130,7 @@ public class Main {
         for(int i=0; i<lista.size(); i++){
             total+=lista.get(i).getFrecuencia();
         }
-        BigDecimal div = new BigDecimal(1).divide(BigDecimal.valueOf(total), MathContext.DECIMAL128);
-        System.out.println(total + " ---------- " + div);
+        BigDecimal div = new BigDecimal(1).divide(BigDecimal.valueOf(total), DECIMALS, RoundingMode.HALF_UP);
         BigDecimal actualDiv= BigDecimal.valueOf(0);
         for(int i=0; i<lista.size(); i++){
             BigDecimal nxtDiv = actualDiv.add(div.multiply(BigDecimal.valueOf(lista.get(i).getFrecuencia())));
