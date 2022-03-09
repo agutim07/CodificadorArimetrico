@@ -1,9 +1,13 @@
 package pack;
 
+import java.math.BigDecimal;
+
 public class Alfabeto {
     private char caracter;
     private int frecuencia;
     private double probabilidad;
+    private BigDecimal L;
+    private BigDecimal H;
 
     Alfabeto(char c){
         this.frecuencia=1;
@@ -19,6 +23,10 @@ public class Alfabeto {
 
     public void setProbabilidad(int total){ this.probabilidad = (double) frecuencia/total; }
     public double getProbabilidad(){ return this.probabilidad; }
+
+    public void setLH(BigDecimal L, BigDecimal H) {this.L = L; this.H = H;}
+    public BigDecimal getL(){return L;}
+    public BigDecimal getH(){return H;}
 
     public String imprimir(){
         String data;
