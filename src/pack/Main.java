@@ -13,19 +13,19 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static int DECIMALS = 64;
+    public static int DECIMALS = 128;
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        File file = new File("D:\\Alberto GM\\ULE\\3º\\SI\\datos_3.txt");
+        File file = new File("D:\\ULE\\3º\\SI\\datos_4.txt");
 
         /** FUENTE DE INFORMACIÓN */
         ArrayList<Alfabeto> lista = generarLista(file);
         System.out.println("Entropía en bits: "+calcularEntropia(lista));
 
         /** NUMERO A MENSAJE */
-        BigDecimal num = new BigDecimal("0.96402816270036736770957975564255630564009");
-        int longuitud=27;
+        BigDecimal num = new BigDecimal("0.938434993679600223922608511494132796026424143844362665527995868729657277");
+        int longuitud=57;
         dividirFuente(lista);
 
         String msg = calcularMensaje(longuitud, num, lista);
@@ -137,6 +137,9 @@ public class Main {
             if(i==lista.size()-1) nxtDiv= BigDecimal.valueOf(1);
             lista.get(i).setLH(actualDiv,nxtDiv);
             actualDiv=nxtDiv;
+            /*if(lista.get(i).getChar()=='n'){
+                System.out.println(lista.get(i).getChar()+"- "+ lista.get(i).getL() +" - "+ lista.get(i).getH());
+            }*/
         }
     }
 
